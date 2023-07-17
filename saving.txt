@@ -28,3 +28,5 @@ i = 0;
 	i = 0;
 	mlx_loop(vars.mlx);
 	return (0);
+
+https://github.com/42YerevanProjects/fdf/blob/master/src/ft_read.c
