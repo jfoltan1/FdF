@@ -1,0 +1,30 @@
+i = 0;
+	vars.mlx = mlx_init();
+	vars.win = mlx_new_window(vars.mlx, 800, 600, "Rectangle Example");
+
+	// Draw a rectangle
+	int x = 100;
+	int y = 100;
+	int width = 200;
+	int height = 150;
+	mlx_string_put(vars.mlx, vars.win, 10, 10, 0xFFFFFF, "Press any key to exit.");
+	mlx_string_put(vars.mlx, vars.win, x + 10, y + 10, 0xFFFFFF, "Rectangle");
+
+	// Draw horizontal lines
+	while (i <= width)
+	{
+		mlx_pixel_put(vars.mlx, vars.win, x + i, y, 0xFFFFFF); // Top line
+		mlx_pixel_put(vars.mlx, vars.win, x + i, y + height, 0xFFFFFF); // Bottom line
+		i++;
+	}
+	i = 0;
+	// Draw vertical lines
+	while (i <= height)
+	{
+		mlx_pixel_put(vars.mlx, vars.win, x, y + i, 0xFFFFFF); // Left line
+		mlx_pixel_put(vars.mlx, vars.win, x + width, y + i, 0xFFFFFF); // Right line
+		i++;
+	}
+	i = 0;
+	mlx_loop(vars.mlx);
+	return (0);
