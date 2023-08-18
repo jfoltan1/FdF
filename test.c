@@ -1,46 +1,55 @@
 #include <mlx.h>
-#include <mlx_int.h>
 
-/* cc test.c -I./minilibx-linux -L./minilibx-linux -lmlx -lX11 -lXext -lm
- */
-#include <mlx.h>
-
-typedef struct	s_vars
+int main(void)
 {
-	void	*mlx;
-	void	*win;
-}				t_vars;
+    void *mlx;
+    void *win;
+    int width = 800;
+    int height = 600;
+    int x = 100;
+    int y = 100;
 
-int		main(void)
-{
-	t_vars	vars;
+    mlx = mlx_init();
+    win = mlx_new_window(mlx, width, height, "Rectangle Example");
 
-	vars.mlx = mlx_init();
-	vars.win = mlx_new_window(vars.mlx, 800, 600, "Rectangle Example");
+    // Draw rectangle - Top line
+    int i = x;
+    while (i < x + 200)
+    {
+        if (i >= 0 && i < width && y >= 0 && y < height)
+            mlx_pixel_put(mlx, win, i, y, 0xFFFFFF);
+        i++;
+    }
 
-	// Draw a rectangle
-	int x = 100;
-	int y = 100;
-	int width = 200;
-	int height = 150;
-	mlx_string_put(vars.mlx, vars.win, 10, 10, 0xFFFFFF, "Press any key to exit.");
-	mlx_string_put(vars.mlx, vars.win, x + 10, y + 10, 0xFFFFFF, "Rectangle");
+    // Draw rectangle - Bottom line
+    i = x;
+    while (i < x + 200)
+    {
+        if (i >= 0 && i < width && y + 150 >= 0 && y + 150 < height)
+            mlx_pixel_put(mlx, win, i, y + 150, 0xFFFFFF);
+        i++;
+    }
 
-	// Draw horizontal lines
-	for (int i = 0; i <= width; i++)
-	{
-		mlx_pixel_put(vars.mlx, vars.win, x + i, y, 0xFFFFFF); // Top line
-		mlx_pixel_put(vars.mlx, vars.win, x + i, y + height, 0xFFFFFF); // Bottom line
-	}
+    // Draw rectangle - Left line
+    i = y;
+    while (i < y + 150)
+    {
+        if (x >= 0 && x < width && i >= 0 && i < height)
+            mlx_pixel_put(mlx, win, x, i, 0xFFFFFF);
+        i++;
+    }
 
-	// Draw vertical lines
-	for (int i = 0; i <= height; i++)
-	{
-		mlx_pixel_put(vars.mlx, vars.win, x, y + i, 0xFFFFFF); // Left line
-		mlx_pixel_put(vars.mlx, vars.win, x + width, y + i, 0xFFFFFF); // Right line
-	}
+    // Draw rectangle - Right line
+    i = y;
+    while (i < y + 150)
+    {
+        if (x + 200 >= 0 && x + 200 < width && i >= 0 && i < height)
+            mlx_pixel_put(mlx, win, x + 200, i, 0xFFFFFF);
+        i++;
+    }
 
-	mlx_loop(vars.mlx);
-	return (0);
+    mlx_loop(mlx);
+    return (0);
 }
 
+/*  cc -Wall -Werror -Wextra -o fdf fdf.c -L./minilibx-linux -lmlx -lXext -lX11 -lm*/
