@@ -55,20 +55,36 @@ int main(int argc, char **argv)
 {
 	t_vars		vars;
 	t_map	map;
-	(void)argv;
 	t_points *points;
+	int s_x;
+	int s_y;
+	int n_x;
+	int n_y;
 
 	map.array = NULL;
 	if (argc == 2)
 	{
 		map.array = get_map(argv);
 		vars.mlx = mlx_init();
-		//vars.win = mlx_new_window(vars.mlx, 800, 600, "fdf my guy is FAAAAB");
+		vars.win = mlx_new_window(vars.mlx, 1280, 720, "fdf my guy is FAAAAB");
 		check_init(vars);
 		points = iso(parser(map.array));
-		//mlx_hook(vars.win,2,1L<<0,get_out_on_key, &vars);
-		//mlx_hook(vars.win,17,0,get_out, &vars);/* still segfaulting */
-		//mlx_loop(vars.mlx);
+	while (points != NULL)
+		{
+			scale_me_daddy(points -> x_pos, points -> y_pos, &s_x,&s_y);
+			if (points -> next != NULL)
+			scale_me_daddy(((t_points *)(points -> next)) -> x_pos, ((t_points *)(points -> next)) -> y_pos, &n_x,&n_y);
+			mlx_pixel_put(vars.mlx, vars.win, s_x, s_y, 0xFFFFFF);
+			 if (points->next != NULL) 
+                {
+					draw_line(&vars, s_x, s_y, n_x, n_y, 0xFFFFFF);
+					draw_grid_lines(&vars, points, 0xFFFFFF);
+				}
+			points = points->next;
+		}
+		mlx_hook(vars.win,2,1L<<0,get_out_on_key, &vars);
+		mlx_hook(vars.win,17,0,get_out, &vars);/* still segfaulting */
+		mlx_loop(vars.mlx);
 	}
 	return(0);
 }

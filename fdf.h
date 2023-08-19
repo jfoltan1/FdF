@@ -37,5 +37,8 @@ int	get_lenght(char **str, char deli,int y);
 t_points	*iso(t_points *points);
 t_points *parser(char **array);
 int	find_char(char *str, char findme);
+void	scale_me_daddy(int x,int y, int *s_x, int *s_y);
+void draw_line(t_vars *vars, int x0, int y0, int x1, int y1, int color);
+void draw_grid_lines(t_vars *vars, t_points *points, int color);
 
 #endif
