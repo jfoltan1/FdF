@@ -6,7 +6,11 @@
 /*   By: jfoltan <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/13 11:43:29 by jfoltan           #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2023/08/04 17:01:53 by jfoltan          ###   ########.fr       */
+=======
+/*   Updated: 2023/07/14 20:50:18 by jfoltan          ###   ########.fr       */
+>>>>>>> 078e68eb377fe1b4142a93e27cd82e51f01182b6
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +34,11 @@ typedef struct s_split_next
 
 int				ft_atoi(const char *str);
 
+<<<<<<< HEAD
 long			ft_atol(const char *str);
 
+=======
+>>>>>>> 078e68eb377fe1b4142a93e27cd82e51f01182b6
 void			ft_bzero(void *s, size_t n);
 
 void			*ft_calloc(size_t count, size_t size);
@@ -121,6 +128,9 @@ t_list			*ft_lstmap(t_list *lst, void *(*f)(void*), void (*del)(void *));
 
 char			*ft_strreverse(char *src);
 
+<<<<<<< HEAD
 void			Error(void);
 
+=======
+>>>>>>> 078e68eb377fe1b4142a93e27cd82e51f01182b6
 #endif

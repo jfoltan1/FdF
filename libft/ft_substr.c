@@ -6,10 +6,16 @@
 /*   By: jfoltan <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/19 10:48:55 by jfoltan           #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2023/08/09 13:56:18 by jfoltan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+=======
+/*   Updated: 2022/12/19 10:48:56 by jfoltan          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+>>>>>>> 078e68eb377fe1b4142a93e27cd82e51f01182b6
 #include "libft.h"
 #include <stddef.h>
 #include <stdlib.h>
@@ -56,6 +62,10 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 		}
 		i++;
 	}
+<<<<<<< HEAD
 	ptr[j] = '\0';
+=======
+	ptr[j] = 0;
+>>>>>>> 078e68eb377fe1b4142a93e27cd82e51f01182b6
 	return (ptr);
 }
