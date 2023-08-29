@@ -1,98 +1,156 @@
 #include "fdf.h"
 
-int	get_out_on_key (int keycode, t_vars *vars,t_map	map)
+int	get_out_on_key(int keycode, t_vars *vars, t_map map)
 {
 	if (keycode == 65307)
-	{	
-		mlx_destroy_window(vars->mlx,vars->win);
+	{
 		mlx_destroy_display(vars->mlx);
+		mlx_destroy_window(vars->mlx, vars->win);
 		free(vars->mlx);
-		free(map.line); //sort this still
+		free(vars->win);
+		free(map.line); // sort this still
 		exit(2);
 	}
-	return(0);
+	return (0);
 }
-int get_out(int keycode,t_vars *vars)
+int	get_out(int keycode, t_vars *vars)
 {
-		(void)keycode;
-		mlx_destroy_window(vars->mlx,vars->win);
-		mlx_destroy_display(vars->mlx);
+	(void)keycode;
+	mlx_destroy_display(vars->mlx);
+	mlx_destroy_window(vars->mlx, vars->win);
+	free(vars->mlx);
+	free(vars->win);
+	exit(2); // still segfaults fml and has leaks!
+}
+void	check_init(t_vars *vars)
+{
+	if (vars->mlx == NULL || vars->win == NULL)
+	{
 		free(vars->mlx);
-		exit(2); //still segfaults fml and has leaks!
+		free(vars->win);
+		exit(2);
+	}
 }
-void check_init(t_vars vars)
-{
-	if(vars.mlx == NULL || vars.win == NULL)
-		{
-			free(vars.mlx);
-			free(vars.win);
-			exit(2);
-		}
-}
-char 	**get_map(char **argv)
+char	**get_map(char **argv)
 {
 	int		a;
 	int		fd;
+	int		fd2;
 	char	**array;
 	char	*line;
-	
+	char	*file;
+
+	file = ft_strdup(argv[1]);
 	a = 0;
-	fd = open(argv[1], O_RDONLY);
-	array = malloc(sizeof(char *)*12);
+	fd = open(file, O_RDONLY);
+	fd2 = open(file, O_RDONLY);
+	array = NULL;
+	while (get_next_line(fd))
+		a++;
+	array = malloc(sizeof(char *) * a + 1);
+	a = 0;
 	while (1)
 	{
-		line = get_next_line(fd);
-		if(line == NULL)
-			break;
-		array[a] = *ft_split(line, '\n');
+		line = get_next_line(fd2);
+		if (!line)
+			break ;
+		array[a] = ft_strdup(line);
 		a++;
 	}
 	array[a] = NULL;
 	free(line);
-	return(array);
+	return (array);
 }
-int main(int argc, char **argv)
+int key_move(int keycode,t_vars *vars)
+{
+	(void)vars;
+	if (keycode == 65361)
+	vars->x -= 2;
+	if (keycode == 65363)
+	 vars->x+= 2;
+	if (keycode == 65362)
+	vars->y += 2;
+	if (keycode == 65364)
+	vars->y -= 2;
+	//mlx_clear_window(vars.mlx,vars.win);
+	return (0);
+}
+int	main(int argc, char **argv)
 {
 	t_vars		vars;
-	t_map	map;
-	t_points *points;
-	int s_x;
-	int s_y;
-	int n_x;
-	int n_y;
-
+	t_map		map;
+	t_points	*points;
+	int			s_x;
+	int			s_y;
+	int			n_x;
+	int			n_y;
+	vars.bits_per_pixel = 256;
+	vars.endian = 1;
+	vars.size_line = 1280 *(256 / 8);
+	int			size_x;
+	int			size_y;
+	//vars = NULL;
+	size_x = 0;
+	size_y = 0;
 	map.array = NULL;
+	vars.x = 0;
+	vars.y = 0;
 	if (argc == 2)
 	{
 		map.array = get_map(argv);
 		vars.mlx = mlx_init();
 		vars.win = mlx_new_window(vars.mlx, 1280, 720, "fdf my guy is FAAAAB");
-		check_init(vars);
-		points = iso(parser(map.array));
+		vars.img = mlx_new_image(vars.mlx,1280,720);
+		vars.data = mlx_get_data_addr(vars.img, &vars.bits_per_pixel,&vars.size_line,&vars.endian);
+
+		check_init(&vars);
+		points = parser(map.array,&size_x,&size_y); // works and x,y are correct
+		points = iso(points,size_x,size_y);
+	 	draw_lines_vertical(points,vars);
 	while (points != NULL)
-		{
-			scale_me_daddy(points -> x_pos, points -> y_pos, &s_x,&s_y);
-			if (points -> next != NULL)
-			scale_me_daddy(((t_points *)(points -> next)) -> x_pos, ((t_points *)(points -> next)) -> y_pos, &n_x,&n_y);
-			mlx_pixel_put(vars.mlx, vars.win, s_x, s_y, 0xFFFFFF);
-			 if (points->next != NULL) 
-                {
-					draw_line(&vars, s_x, s_y, n_x, n_y, 0xFFFFFF);
-					draw_grid_lines(&vars, points, 0xFFFFFF);
-				}
-			points = points->next;
+	{
+    	s_x = points->x_pos;
+    	s_y = points->y_pos;
+		if (points->next && points->column == ((t_points *)(points->next))->column)
+    	{
+       	n_x = ((t_points *)(points->next))->x_pos;
+      	n_y = ((t_points *)(points->next))->y_pos;
+		draw_line(&vars, s_x, s_y, n_x, n_y, points->color);
 		}
-		mlx_hook(vars.win,2,1L<<0,get_out_on_key, &vars);
-		mlx_hook(vars.win,17,0,get_out, &vars);/* still segfaulting */
+    	points = points->next;
+	}
+		mlx_hook(vars.win, 2, 1L << 0, get_out_on_key, &vars);
+		mlx_hook(vars.win, 17, 0, get_out, &vars); // still segfaulting
+		mlx_key_hook(vars.win,key_move,NULL);
+		mlx_put_image_to_window(vars.mlx,vars.win,vars.img,vars.x,vars.y);
 		mlx_loop(vars.mlx);
 	}
-	return(0);
+	free(vars.mlx);
+	return (0);
 }
-/* 
-TODO:
-	- exit function with freeing upon error of creating stuff,pass the vars to it and free all 
-	- segfault on esc happens when I start to parse map. 
-	- bresenham algorithm
+/*
+int	main(int argc, char **argv)
+{
+	t_points	*points;
+	t_map		map;
 
+	//vars = NULL;
 
- */
+	map.array = NULL;
+	if (argc == 2)
+		map.array = get_map(argv);
+	points = scale_me_daddy(iso(parser(map.array)));
+	while (points)
+	{
+		printf("%ld ",points->x_pos);
+		printf("%ld\n",points->y_pos);
+		points = points->next;
+	}
+}
+
+//TODO:
+	//- exit function with freeing upon error of creating stuff,pass the vars to it and free all
+	//- segfault on esc happens when I start to parse map.
+	//- bresenham algorithm
+	// y+1 for vertical?*/
+	//implement integer pointers for pixel put!

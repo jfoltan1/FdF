@@ -5,23 +5,34 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "./gnl/get_next_line.h"
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include "./libft/libft.h"
 
 typedef struct vars
 {
 	void *mlx;
 	void *win;
+	void *img;
+	void *data;
+	int	bits_per_pixel;
+	int size_line;
+	int endian;
+	int x;
+	int y;
+
 }			t_vars;
 
 typedef struct points
 {
-	int x_pos;
-	int y_pos;
-	int z_pos;
-	char *color;
+	long x_pos;
+	long y_pos;
+	long z_pos;
+	int color;
 	void *next;
-
+	long column;
+	long row;
 }			t_points;
 
 typedef struct map
@@ -32,13 +43,12 @@ typedef struct map
 	char	*line;
 }			t_map;
 
-void	get_size(char **array,int *xnum, int *ynum);
-int	get_lenght(char **str, char deli,int y);
-t_points	*iso(t_points *points);
-t_points *parser(char **array);
+t_points	*iso(t_points *points,int size_x,int size_y);
+t_points	*parser(char **array, int *max_x, int *max_y);
 int	find_char(char *str, char findme);
-void	scale_me_daddy(int x,int y, int *s_x, int *s_y);
-void draw_line(t_vars *vars, int x0, int y0, int x1, int y1, int color);
-void draw_grid_lines(t_vars *vars, t_points *points, int color);
+t_points	*scale_me_daddy(t_points *points,int *max_x,int *max_y);
+void draw_line(t_vars *vars, int x1, int y1, int x2, int y2, int color);
+void	draw_lines_vertical(t_points *points, t_vars vars);
+char	*get_next_line(int fd);
 
 #endif

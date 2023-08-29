@@ -1,5 +1,5 @@
 NAME = fdf
-SRCS = fdf.c gnl/get_next_line.c gnl/get_next_line_utils.c pixels.c utils.c
+SRCS = fdf.c get_next_line.c pixels.c utils.c
 LIBFT_DIR = ./libft
 LIBFT = $(LIBFT_DIR)/libft.a
 MLX_DIR = ./minilibx-linux
