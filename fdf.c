@@ -63,16 +63,17 @@ char	**get_map(char **argv)
 }
 int key_move(int keycode,t_vars *vars)
 {
-	(void)vars;
+	//(void)vars;
 	if (keycode == 65361)
-	vars->x -= 2;
+		vars->x+= 5;
 	if (keycode == 65363)
-	 vars->x+= 2;
+		vars->x-= 5;
 	if (keycode == 65362)
-	vars->y += 2;
+		vars->y += 5;
 	if (keycode == 65364)
-	vars->y -= 2;
-	//mlx_clear_window(vars.mlx,vars.win);
+		vars->y -= 5;
+	//mlx_clear_window(vars->mlx,vars->win);
+	mlx_put_image_to_window(vars->mlx,vars->win,vars->img,vars->x,vars->y);
 	return (0);
 }
 int	main(int argc, char **argv)
@@ -86,7 +87,7 @@ int	main(int argc, char **argv)
 	int			n_y;
 	vars.bits_per_pixel = 256;
 	vars.endian = 1;
-	vars.size_line = 1280 *(256 / 8);
+	vars.size_line = 3840 *(256 / 8);
 	int			size_x;
 	int			size_y;
 	//vars = NULL;
@@ -99,12 +100,12 @@ int	main(int argc, char **argv)
 	{
 		map.array = get_map(argv);
 		vars.mlx = mlx_init();
-		vars.win = mlx_new_window(vars.mlx, 1280, 720, "fdf my guy is FAAAAB");
-		vars.img = mlx_new_image(vars.mlx,1280,720);
+		vars.win = mlx_new_window(vars.mlx, 1280,720, "fdf my guy is FAAAAB");
+		vars.img = mlx_new_image(vars.mlx,3840,2160);
 		vars.data = mlx_get_data_addr(vars.img, &vars.bits_per_pixel,&vars.size_line,&vars.endian);
 
 		check_init(&vars);
-		points = parser(map.array,&size_x,&size_y); // works and x,y are correct
+		points = parser(map.array,&size_x,&size_y);
 		points = iso(points,size_x,size_y);
 	 	draw_lines_vertical(points,vars);
 	while (points != NULL)
@@ -121,8 +122,8 @@ int	main(int argc, char **argv)
 	}
 		mlx_hook(vars.win, 2, 1L << 0, get_out_on_key, &vars);
 		mlx_hook(vars.win, 17, 0, get_out, &vars); // still segfaulting
-		mlx_key_hook(vars.win,key_move,NULL);
-		mlx_put_image_to_window(vars.mlx,vars.win,vars.img,vars.x,vars.y);
+		mlx_key_hook(vars.win,key_move,&vars);
+		mlx_put_image_to_window(vars.mlx,vars.win,vars.img,0,0);
 		mlx_loop(vars.mlx);
 	}
 	free(vars.mlx);

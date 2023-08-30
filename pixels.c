@@ -3,7 +3,7 @@ void    my_mlx_pixel_put(t_vars vars, int x, int y , int color)
 {
     char    *dst;
 	(void)color;
-    if (x > 0 && y > 0 && x < 1280 && y < 720)
+    if (x > 0 && y > 0 && x < 3840 && y < 2160)
     {
         dst = vars.data + (y * vars.size_line + x * (vars.bits_per_pixel / 8));
         *(int *)dst = color;
@@ -13,12 +13,11 @@ t_points *iso(t_points *points,int size_x,int size_y)
 {
     void *head;
     double angle_radians = 0.785398;  // Angle in radians (approximately 45 degrees)
-    double zoom = 5;                // Zoom factor
-    int offset_x = 1280 / 2;          // X offset for centering
-    int offset_y = 720 / 2;           // Y offset for centering
-	int calc_zoom;
+    double zoom = 3;                // Zoom factor
+    int offset_x = 3840 / 2;          // X offset for centering
+    int offset_y = 2160 / 2;           // Y offset for centering
     head = points;
-	calc_zoom = size_x * size_y;
+	int test;
 	/*while (calc_zoom > 100)
 		{
 			zoom--;
@@ -35,6 +34,8 @@ t_points *iso(t_points *points,int size_x,int size_y)
         double projected_y = (scaled_x + scaled_y) * sin(angle_radians) - scaled_z + offset_y;
 
         // Update the points' positions
+		if (test == 1) // okay potrebujes vediet kde je prvy bod a tam dat suradnice 0,0, sprav extra pointre a ptm to posun do mainu, dik si top chalan
+
         points->x_pos = (int)projected_x;
         points->y_pos = (int)projected_y;
 
