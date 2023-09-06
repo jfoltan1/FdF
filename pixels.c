@@ -3,26 +3,20 @@ void    my_mlx_pixel_put(t_vars vars, int x, int y , int color)
 {
     char    *dst;
 	(void)color;
-    if (x > 0 && y > 0 && x < 3840 && y < 2160)
+    if (x > 0 && y > 0 && x < 1280 && y < 720)
     {
         dst = vars.data + (y * vars.size_line + x * (vars.bits_per_pixel / 8));
         *(int *)dst = color;
     }
 }
-t_points *iso(t_points *points,int size_x,int size_y) 
+t_points *iso(t_points *points,int size_x,int size_y)
 {
     void *head;
-    double angle_radians = 0.785398;  // Angle in radians (approximately 45 degrees)
-    double zoom = 3;                // Zoom factor
-    int offset_x = 3840 / 2;          // X offset for centering
-    int offset_y = 2160 / 2;           // Y offset for centering
+    double angle_radians = 0.785398; // Angle in radians (approximately 45 degrees)
+    double zoom = 2;                // Zoom factor
+    int offset_x = 1280 / 2;          // X offset for centering
+    int offset_y = 720 / 2;           // Y offset for centering
     head = points;
-	int test;
-	/*while (calc_zoom > 100)
-		{
-			zoom--;
-			calc_zoom %= 10;
-		}*/
 	while (points != NULL) {
         // Apply scaling and zoom
         double scaled_x = (points->x_pos - size_x / 2) * zoom;
@@ -34,7 +28,7 @@ t_points *iso(t_points *points,int size_x,int size_y)
         double projected_y = (scaled_x + scaled_y) * sin(angle_radians) - scaled_z + offset_y;
 
         // Update the points' positions
-		if (test == 1) // okay potrebujes vediet kde je prvy bod a tam dat suradnice 0,0, sprav extra pointre a ptm to posun do mainu, dik si top chalan
+		// if (test == 1) // okay potrebujes vediet kde je prvy bod a tam dat suradnice 0,0, sprav extra pointre a ptm to posun do mainu, dik si top chalan
 
         points->x_pos = (int)projected_x;
         points->y_pos = (int)projected_y;
@@ -44,12 +38,38 @@ t_points *iso(t_points *points,int size_x,int size_y)
 
     return head;
 }
-
-
-t_points	*scale_me_daddy(t_points *points,int *max_x,int *max_y)
+void draw_line(t_vars *vars, int x1, int y1, int x2, int y2, int color)
 {
-	int		center_x;
-	int		center_y;
+    int dx = abs(x2 - x1);
+    int dy = abs(y2 - y1);
+    int sx = (x1 < x2) ? 1 : -1;
+    int sy = (y1 < y2) ? 1 : -1;
+    int err = dx - dy;
+
+    while (1)
+    {
+        my_mlx_pixel_put(*vars ,x1 , y1 ,color);
+        if (x1 == x2 && y1 == y2)
+            break;
+
+        int e2 = 2 * err;
+        if (e2 > -dy)
+        {
+            err -= dy;
+            x1 += sx;
+        }
+        if (e2 < dx)
+        {
+            err += dx;
+            y1 += sy;
+        }
+    }
+}
+
+/*t_points	*scale_me_daddy(t_points *points,int *max_x,int *max_y)
+{
+	// int		center_x;
+	// int		center_y;
 	void	*head;
 
 	head = points;
@@ -66,9 +86,9 @@ t_points	*scale_me_daddy(t_points *points,int *max_x,int *max_y)
 	scale = x_scale;
 	if (y_scale < x_scale)
 		scale = y_scale;
-	center_x = 640;
-	center_y = 360;
-	
+	// center_x = 640;
+	// center_y = 360;
+
 	while (points != NULL)
 	{
 		points->x_pos = points->x_pos * 15;
@@ -104,7 +124,7 @@ void draw_line(t_vars *vars, int x1, int y1, int x2, int y2, int color)
             y1 += sy;
         }
     }
-}
+}*/
 void draw_lines_vertical(t_points *points, t_vars vars)
 {
     t_points *temp;
@@ -139,4 +159,4 @@ void draw_lines_vertical(t_points *points, t_vars vars)
 		break;
 }
 	points = head;
-}	
+}

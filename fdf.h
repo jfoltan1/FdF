@@ -45,6 +45,7 @@ typedef struct map
 
 t_points	*iso(t_points *points,int size_x,int size_y);
 t_points	*parser(char **array, int *max_x, int *max_y);
+void free_map(t_map map);
 int	find_char(char *str, char findme);
 t_points	*scale_me_daddy(t_points *points,int *max_x,int *max_y);
 void draw_line(t_vars *vars, int x1, int y1, int x2, int y2, int color);

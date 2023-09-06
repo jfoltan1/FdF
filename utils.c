@@ -19,7 +19,7 @@ int hexToInt(const char *hex) {
     if (hex[0] == '0' && (hex[1] == 'x' || hex[1] == 'X')) {
         hex += 2;
     }
-    
+
     while (*hex) {
         digit = hexCharToInt(*hex);
         if (digit == -1) {
@@ -28,7 +28,7 @@ int hexToInt(const char *hex) {
         result = (result << 4) | digit;
         hex++;
     }
-    
+
     return result;
 }
 
@@ -53,12 +53,12 @@ t_points	*parser(char **array,int *max_x,int *max_y)
 	char		**line_split;
 	int			x;
 	t_points	*new_point;
-	char 		*temp_col;
+	// char 		*temp_col;
 
 	points = NULL;
 	head = NULL;
 	y = 0;
-	temp_col = NULL;
+	// temp_col = NULL;
 	while (array[y])
 	{
 		line_split = ft_split(array[y], ' ');
@@ -100,4 +100,16 @@ t_points	*parser(char **array,int *max_x,int *max_y)
 	*max_x += 1;
 	*max_y = y;
 	return (head);
+}
+void free_map(t_map map)
+{
+	int i;
+	i = 0;
+	while(map.array[i])
+	{
+		free(map.array[i]);
+		i++;
+	}
+	free(map.array);
+	// free(map.line);
 }

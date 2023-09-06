@@ -8,7 +8,7 @@ int	get_out_on_key(int keycode, t_vars *vars, t_map map)
 		mlx_destroy_window(vars->mlx, vars->win);
 		free(vars->mlx);
 		free(vars->win);
-		free(map.line); // sort this still
+		free(map.line); // sort this still1
 		exit(2);
 	}
 	return (0);
@@ -38,27 +38,28 @@ char	**get_map(char **argv)
 	int		fd2;
 	char	**array;
 	char	*line;
-	char	*file;
 
-	file = ft_strdup(argv[1]);
+	line = NULL;
+
 	a = 0;
-	fd = open(file, O_RDONLY);
-	fd2 = open(file, O_RDONLY);
-	array = NULL;
+	fd = open(argv[1], O_RDONLY);
+	fd2 = open(argv[1], O_RDONLY);
 	while (get_next_line(fd))
 		a++;
-	array = malloc(sizeof(char *) * a + 1);
+	array = malloc(sizeof(char *) * a + 2);
 	a = 0;
 	while (1)
 	{
 		line = get_next_line(fd2);
 		if (!line)
-			break ;
+			{
+				// array[a] = NULL; // toto mozno bude problem
+			free(line);
+				break;
+			}
 		array[a] = ft_strdup(line);
 		a++;
 	}
-	array[a] = NULL;
-	free(line);
 	return (array);
 }
 int key_move(int keycode,t_vars *vars)
@@ -87,10 +88,10 @@ int	main(int argc, char **argv)
 	int			n_y;
 	vars.bits_per_pixel = 256;
 	vars.endian = 1;
-	vars.size_line = 3840 *(256 / 8);
+	vars.size_line = 1280 *(256 / 8);
 	int			size_x;
 	int			size_y;
-	//vars = NULL;
+	// vars = NULL;
 	size_x = 0;
 	size_y = 0;
 	map.array = NULL;
@@ -99,11 +100,11 @@ int	main(int argc, char **argv)
 	if (argc == 2)
 	{
 		map.array = get_map(argv);
-		vars.mlx = mlx_init();
+		/*vars.mlx = mlx_init();
 		vars.win = mlx_new_window(vars.mlx, 1280,720, "fdf my guy is FAAAAB");
 		vars.img = mlx_new_image(vars.mlx,3840,2160);
 		vars.data = mlx_get_data_addr(vars.img, &vars.bits_per_pixel,&vars.size_line,&vars.endian);
-
+	}
 		check_init(&vars);
 		points = parser(map.array,&size_x,&size_y);
 		points = iso(points,size_x,size_y);
@@ -124,9 +125,10 @@ int	main(int argc, char **argv)
 		mlx_hook(vars.win, 17, 0, get_out, &vars); // still segfaulting
 		mlx_key_hook(vars.win,key_move,&vars);
 		mlx_put_image_to_window(vars.mlx,vars.win,vars.img,0,0);
-		mlx_loop(vars.mlx);
-	}
-	free(vars.mlx);
+		mlx_loop(vars.mlx);*/
+}
+	// free(vars.mlx);
+	free_map(map);
 	return (0);
 }
 /*
