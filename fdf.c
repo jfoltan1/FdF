@@ -35,31 +35,28 @@ char	**get_map(char **argv)
 {
 	int		a;
 	int		fd;
-	int		fd2;
 	char	**array;
 	char	*line;
 
 	line = NULL;
 
-	a = 0;
+	a = 1;
 	fd = open(argv[1], O_RDONLY);
-	fd2 = open(argv[1], O_RDONLY);
-	while (get_next_line(fd))
-		a++;
-	array = malloc(sizeof(char *) * a + 2);
+	array = ft_calloc(12,sizeof (char**));
 	a = 0;
 	while (1)
 	{
-		line = get_next_line(fd2);
-		if (!line)
+		line = get_next_line(fd);
+		if (line == NULL)
 			{
-				// array[a] = NULL; // toto mozno bude problem
-			free(line);
+				free(line);
 				break;
 			}
 		array[a] = ft_strdup(line);
+		free(line);
 		a++;
 	}
+	//free(line);
 	return (array);
 }
 int key_move(int keycode,t_vars *vars)
@@ -80,7 +77,8 @@ int key_move(int keycode,t_vars *vars)
 int	main(int argc, char **argv)
 {
 	t_vars		vars;
-	t_map		map;
+	 t_map		map;
+	char **array;
 	t_points	*points;
 	int			s_x;
 	int			s_y;
@@ -94,12 +92,12 @@ int	main(int argc, char **argv)
 	// vars = NULL;
 	size_x = 0;
 	size_y = 0;
-	map.array = NULL;
+	array = NULL;
 	vars.x = 0;
 	vars.y = 0;
 	if (argc == 2)
 	{
-		map.array = get_map(argv);
+		array = get_map(argv);
 		/*vars.mlx = mlx_init();
 		vars.win = mlx_new_window(vars.mlx, 1280,720, "fdf my guy is FAAAAB");
 		vars.img = mlx_new_image(vars.mlx,3840,2160);
@@ -127,10 +125,8 @@ int	main(int argc, char **argv)
 		mlx_put_image_to_window(vars.mlx,vars.win,vars.img,0,0);
 		mlx_loop(vars.mlx);*/
 }
-	// free(vars.mlx);
-	free_map(map);
-	return (0);
 }
+	// free(vars.mlx
 /*
 int	main(int argc, char **argv)
 {
