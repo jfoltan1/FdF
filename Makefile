@@ -6,7 +6,7 @@ MLX_DIR = ./minilibx-linux
 MLX_LIB = $(MLX_DIR)/libmlx.a
 MLX_INC = -I$(MLX_DIR)
 INCLUDES = -I$(LIBFT_DIR) $(MLX_INC)
-CFLAGS = -Wall -Wextra -Werror -g
+CFLAGS =  -Wall -Wextra -g
 LDFLAGS = -L$(LIBFT_DIR) -lft -L$(MLX_DIR) -lmlx -lX11 -lXext -lm 
 
 $(NAME): $(SRCS) $(LIBFT) $(MLX_LIB)

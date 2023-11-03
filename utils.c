@@ -45,33 +45,26 @@ int	find_char(char *str, char findme)
 	}
 	return (0);
 }
-t_points	*parser(char **array,int *max_x,int *max_y)
+t_points	*parser(t_points *points, char **array,int *max_x,int *max_y)
 {
-	t_points	*points;
 	t_points	*head;
 	int			y;
 	char		**line_split;
 	int			x;
 	t_points	*new_point;
-	char 		*temp_col;
 
 	points = NULL;
 	head = NULL;
 	y = 0;
-	temp_col = NULL;
 	while (array[y])
 	{
 		line_split = ft_split(array[y], ' ');
 		x = 0;
 		while (line_split[x] != NULL)
 		{
-			new_point = malloc(sizeof(t_points));
+			new_point = ft_calloc(1, sizeof(t_points)); //protect it 
 			if (!new_point)
-			{
-				// Handle memory allocation error
-				// might want to free previously allocated memory before returning NULL
 				return (NULL);
-			}
 			new_point->x_pos = x;
 			new_point->y_pos = y;
 			new_point->z_pos = ft_atoi(line_split[x]);
@@ -95,9 +88,36 @@ t_points	*parser(char **array,int *max_x,int *max_y)
 				*max_x = x;
 			x++;
 		}
+		free_arr(line_split);
 		y++;
 	}
 	*max_x += 1;
 	*max_y = y;
 	return (head);
+}
+
+void	free_arr(char **array)
+{
+	int	i;
+	
+	i = 0;
+
+	while(array[i])
+	{
+		free(array[i]);
+		i++;
+	}
+	free(array);
+}
+void free_points(t_points *points)
+{
+	t_points *temp;
+
+	while(points->next != NULL)
+	{
+		temp = points;
+		points = points->next;
+		free(temp);
+	}
+	free(points);
 }

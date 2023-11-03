@@ -1,26 +1,30 @@
 #include "fdf.h"
 
-int	get_out_on_key(int keycode, t_vars *vars, t_map map)
+int	get_out_on_key(int keycode, t_vars *vars)
 {
 	if (keycode == 65307)
 	{
-		mlx_destroy_display(vars->mlx);
+		//for esc
+		
+		mlx_destroy_image(vars->mlx,vars->img);
 		mlx_destroy_window(vars->mlx, vars->win);
+		mlx_destroy_display(vars->mlx);
+		free_points(vars->points);
 		free(vars->mlx);
-		free(vars->win);
-		free(map.line); // sort this still
+		free(vars);
 		exit(2);
 	}
 	return (0);
 }
-int	get_out(int keycode, t_vars *vars)
+int	get_out(t_vars *vars)
 {
-	(void)keycode;
+	mlx_destroy_image(vars->mlx,vars->img);
+	mlx_destroy_window(vars->mlx, vars->win);	
 	mlx_destroy_display(vars->mlx);
-	mlx_destroy_window(vars->mlx, vars->win);
+	free_points(vars->points);
 	free(vars->mlx);
-	free(vars->win);
-	exit(2); // still segfaults fml and has leaks!
+	free(vars);
+	exit(2);
 }
 void	check_init(t_vars *vars)
 {
@@ -35,33 +39,31 @@ char	**get_map(char **argv)
 {
 	int		a;
 	int		fd;
-	int		fd2;
 	char	**array;
 	char	*line;
-	char	*file;
 
-	file = ft_strdup(argv[1]);
-	a = 0;
-	fd = open(file, O_RDONLY);
-	fd2 = open(file, O_RDONLY);
-	array = NULL;
-	while (get_next_line(fd))
-		a++;
-	array = malloc(sizeof(char *) * a + 1);
+	line = NULL;
+
+	a = 1;
+	fd = open(argv[1], O_RDONLY);
+	array = ft_calloc(12,sizeof (char**));
 	a = 0;
 	while (1)
 	{
-		line = get_next_line(fd2);
-		if (!line)
-			break ;
+		line = get_next_line(fd);
+		if (line == NULL)
+			{
+				free(line);
+				break;
+			}
 		array[a] = ft_strdup(line);
+		free(line);
 		a++;
 	}
-	array[a] = NULL;
 	free(line);
 	return (array);
 }
-int key_move(int keycode,t_vars *vars)
+/*int key_move(int keycode,t_vars *vars)
 {
 	//(void)vars;
 	if (keycode == 65361)
@@ -75,42 +77,43 @@ int key_move(int keycode,t_vars *vars)
 	//mlx_clear_window(vars->mlx,vars->win);
 	mlx_put_image_to_window(vars->mlx,vars->win,vars->img,vars->x,vars->y);
 	return (0);
-}
+}*/
 int	main(int argc, char **argv)
 {
-	t_vars		vars;
+	t_vars		*vars;
 	t_map		map;
-	t_points	*points;
-	int			s_x;
-	int			s_y;
-	int			n_x;
-	int			n_y;
-	vars.bits_per_pixel = 256;
-	vars.endian = 1;
-	vars.size_line = 3840 *(256 / 8);
+	//int			s_x;
+	//int			s_y;
+	//int			n_x;
+	//int			n_y;
+	vars = ft_calloc(1, sizeof(t_vars));
+	vars->bits_per_pixel = 256;
+	vars->endian = 1;
+	vars->size_line = 1280 *(256 / 8);
 	int			size_x;
 	int			size_y;
 	//vars = NULL;
 	size_x = 0;
 	size_y = 0;
 	map.array = NULL;
-	vars.x = 0;
-	vars.y = 0;
+	vars->x = 0;
+	vars->y = 0;
 	if (argc == 2)
-	{
-		map.array = get_map(argv);
-		vars.mlx = mlx_init();
-		vars.win = mlx_new_window(vars.mlx, 1280,720, "fdf my guy is FAAAAB");
-		vars.img = mlx_new_image(vars.mlx,3840,2160);
-		vars.data = mlx_get_data_addr(vars.img, &vars.bits_per_pixel,&vars.size_line,&vars.endian);
+		map.array = get_map(argv);//leak sorted
+	{ 
+		vars->mlx = mlx_init();
+		vars->win = mlx_new_window(vars->mlx, 1280,720, "fdf my guy is FAAAAB");
+		vars->img = mlx_new_image(vars->mlx,1280,720);
+		vars->data = mlx_get_data_addr(vars->img, &vars->bits_per_pixel,&vars->size_line,&vars->endian);
 
-		check_init(&vars);
-		points = parser(map.array,&size_x,&size_y);
-		points = iso(points,size_x,size_y);
-	 	draw_lines_vertical(points,vars);
+		check_init(vars);
+		vars->points = parser(vars->points, map.array,&size_x,&size_y);
+		free_arr(map.array);
+		vars->points = iso(vars->points,size_x,size_y); 
+	 	/*draw_lines_vertical(points,vars);
 	while (points != NULL)
 	{
-    	s_x = points->x_pos;
+    	s_x = points->x_pos; //AYOOOO wait, undo the vars pointer, so oyu dont have to rewrite everything 
     	s_y = points->y_pos;
 		if (points->next && points->column == ((t_points *)(points->next))->column)
     	{
@@ -119,14 +122,13 @@ int	main(int argc, char **argv)
 		draw_line(&vars, s_x, s_y, n_x, n_y, points->color);
 		}
     	points = points->next;
+	}*/
+		mlx_hook(vars->win, 17, 1L << 17, get_out, vars); // still segfaulting
+		mlx_hook(vars->win, 2, 1L << 0, get_out_on_key, vars);
+		//mlx_key_hook(vars->win,key_move,vars);
+		mlx_put_image_to_window(vars->mlx,vars->win,vars->img,0,0);
+		mlx_loop(vars->mlx);
 	}
-		mlx_hook(vars.win, 2, 1L << 0, get_out_on_key, &vars);
-		mlx_hook(vars.win, 17, 0, get_out, &vars); // still segfaulting
-		mlx_key_hook(vars.win,key_move,&vars);
-		mlx_put_image_to_window(vars.mlx,vars.win,vars.img,0,0);
-		mlx_loop(vars.mlx);
-	}
-	free(vars.mlx);
 	return (0);
 }
 /*
