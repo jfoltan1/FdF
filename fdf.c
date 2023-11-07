@@ -1,3 +1,4 @@
+
 #include "fdf.h"
 
 int	get_out_on_key(int keycode, t_vars *vars)
@@ -43,10 +44,22 @@ char	**get_map(char **argv)
 	char	*line;
 
 	line = NULL;
-
-	a = 1;
+	a = 0;
 	fd = open(argv[1], O_RDONLY);
-	array = ft_calloc(12,sizeof (char**));
+	while (1)
+	{
+		line = get_next_line(fd);
+		if (line == NULL)
+			{
+				free(line);
+				break;
+			}
+		free(line);
+		a++;
+	}
+	array = ft_calloc(a + 1,sizeof (char**));
+	close(fd);
+	fd = open(argv[1], O_RDONLY);
 	a = 0;
 	while (1)
 	{
@@ -63,36 +76,22 @@ char	**get_map(char **argv)
 	free(line);
 	return (array);
 }
-/*int key_move(int keycode,t_vars *vars)
-{
-	//(void)vars;
-	if (keycode == 65361)
-		vars->x+= 5;
-	if (keycode == 65363)
-		vars->x-= 5;
-	if (keycode == 65362)
-		vars->y += 5;
-	if (keycode == 65364)
-		vars->y -= 5;
-	//mlx_clear_window(vars->mlx,vars->win);
-	mlx_put_image_to_window(vars->mlx,vars->win,vars->img,vars->x,vars->y);
-	return (0);
-}*/
+
 int	main(int argc, char **argv)
 {
 	t_vars		*vars;
 	t_map		map;
-	//int			s_x;
-	//int			s_y;
-	//int			n_x;
-	//int			n_y;
+	void	*head;
+	int			s_x;
+	int			s_y;
+	int			n_x;
+	int			n_y;
 	vars = ft_calloc(1, sizeof(t_vars));
 	vars->bits_per_pixel = 256;
 	vars->endian = 1;
 	vars->size_line = 1280 *(256 / 8);
 	int			size_x;
 	int			size_y;
-	//vars = NULL;
 	size_x = 0;
 	size_y = 0;
 	map.array = NULL;
@@ -110,20 +109,22 @@ int	main(int argc, char **argv)
 		vars->points = parser(vars->points, map.array,&size_x,&size_y);
 		free_arr(map.array);
 		vars->points = iso(vars->points,size_x,size_y); 
-	 	/*draw_lines_vertical(points,vars);
-	while (points != NULL)
+	 	draw_lines_vertical(vars->points,*vars);
+		head = vars->points;	
+	while (vars->points != NULL)
 	{
-    	s_x = points->x_pos; //AYOOOO wait, undo the vars pointer, so oyu dont have to rewrite everything 
-    	s_y = points->y_pos;
-		if (points->next && points->column == ((t_points *)(points->next))->column)
+    	s_x = vars->points->x_pos;
+    	s_y = vars->points->y_pos;
+		if (vars->points->next && vars->points->column == ((t_points *)(vars->points->next))->column)
     	{
-       	n_x = ((t_points *)(points->next))->x_pos;
-      	n_y = ((t_points *)(points->next))->y_pos;
-		draw_line(&vars, s_x, s_y, n_x, n_y, points->color);
+       	n_x = ((t_points *)(vars->points->next))->x_pos;
+      	n_y = ((t_points *)(vars->points->next))->y_pos;
+		draw_line(vars, s_x, s_y, n_x, n_y, vars->points->color);
 		}
-    	points = points->next;
-	}*/
-		mlx_hook(vars->win, 17, 1L << 17, get_out, vars); // still segfaulting
+    	vars->points = vars->points->next;
+	}
+		vars->points = head;
+		mlx_hook(vars->win, 17, 1L << 17, get_out, vars);
 		mlx_hook(vars->win, 2, 1L << 0, get_out_on_key, vars);
 		//mlx_key_hook(vars->win,key_move,vars);
 		mlx_put_image_to_window(vars->mlx,vars->win,vars->img,0,0);
