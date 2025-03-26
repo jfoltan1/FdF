@@ -9,6 +9,7 @@ A simple 3D wireframe renderer written in C using **MiniLibX**. It takes a `.fdf
 - Reads a `.fdf` file: a grid of altitude values.
 - Plots a 3D landscape using line segments between points.
 - Displays it using **MiniLibX** in isometric projection.
+- Memory leak-free.
 
 ---
 
@@ -71,39 +72,5 @@ Press `ESC` or close the window to exit cleanly.
 
 Each number = elevation. Horizontal = X, vertical = Y, value = Z.
 
----
-
-## ✅ Bonus Goals (if base is 100% working)
-
-- Extra projection mode (e.g., parallel)
-- Model zooming, panning, rotation
-- Add UI overlay or export view
-
----
-
-## 🧪 Testing Tips
-
-Use `valgrind` to ensure clean memory handling:
-```bash
-valgrind ./fdf map.fdf
-```
-
----
-
-## 🗂️ Project Structure
-
-```
-├── src/
-├── includes/
-├── libft/
-├── Makefile
-└── README.md
-```
-
----
-
-## 💬 Final Note
-
-This project is a stepping stone into computer graphics and low-level rendering in C. It’s designed to get hands-on with graphical concepts like projections, pixel plotting, and event handling—all without OpenGL or external engines.
 
 ---
